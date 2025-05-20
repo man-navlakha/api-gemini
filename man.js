@@ -2,9 +2,13 @@ const express = require('express');
 const axios = require('axios');
 const app = express();
 const port = 5000;
-
+const cors = require('cors');
 // Middleware to parse JSON request bodies
 app.use(express.json());
+app.use(cors({
+  origin: ['http://localhost:3000', 'https://mysolvingerai.vercel.app'],
+  methods: ['POST'],
+}));
 
 // --- API Configuration ---
 // It's highly recommended to use environment variables for API keys in production.
