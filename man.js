@@ -24,22 +24,22 @@ const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/
  * @returns {Promise<{model: string, promptReceived: string, response: string}>} - The model response object.
  * @throws {Error} - If the API call fails.
  */
-async function sendToGeminiModel(prompt) {
+/**
+ * @param {Array<{role: 'user' | 'model', text: string}>} messages - The conversation history.
+ */
+async function sendToGeminiModel(messages) {
+
   try {
     // Make a POST request to the Gemini API
     const response = await axios.post(
       GEMINI_API_URL,
       {
         // Structure of the request body for Gemini's generateContent
-        contents: [
-          {
-            parts: [
-              {
-                text: prompt // The prompt content goes here
-              }
-            ]
-          }
-        ]
+       contents: messages.map(message => ({
+  role: message.role,
+  parts: [{ text: message.text }]
+}))
+
       },
       {
         // Configuration for the request, including headers and parameters
@@ -82,37 +82,39 @@ const geminiRouter = express.Router();
 // Define a unique POST route for chat interactions
 // This route will be accessed at /gemini/chat
 geminiRouter.post('/chat', async (req, res) => {
-  // Extract the prompt from the request body
-  const { prompt } = req.body;
+  const { messages } = req.body;
 
-  // Validate that a prompt was provided
-  if (!prompt) {
-    return res.status(400).json({ error: 'Prompt is required' });
+  if (!Array.isArray(messages) || messages.length === 0) {
+    return res.status(400).json({ error: 'Messages array is required' });
   }
 
-  // --- Custom Response Logic ---
-  // Check if the prompt includes the word "name" (case-insensitive)
-  if (prompt.toLowerCase().includes('name')) {
-    // If it does, send the custom response directly
+  // Optionally inject custom logic
+  const latestMessage = messages[messages.length - 1].text;
+  if (latestMessage.toLowerCase().includes('name')) {
+    messages.push({ role: 'model', text: 'My name is Solvinger' });
     return res.json({
-      model: 'custom-response', // Indicate this is a custom response
-      promptReceived: prompt,
-      response: 'My name is Solvinger' // The hardcoded response
+      model: 'custom-response',
+      promptReceived: latestMessage,
+      response: 'My name is Solvinger'
     });
   }
-  // --- Call Gemini API for other prompts ---
-  try {
-    // Call the function to send the prompt to the Gemini model
-   const shortPrompt = `Answer in a concise and short manner (like you are on a call ): ${prompt}`;
-const modelResponse = await sendToGeminiModel(shortPrompt);
 
-    // Send the model's response back to the client
+  try {
+    // Add system prompt or any additional context if needed
+    const contextualMessages = [
+      { role: 'user', text: 'Answer in a concise and short manner (like you are on a call).' },
+      ...messages
+    ];
+
+    const modelResponse = await sendToGeminiModel(contextualMessages);
+
+    // Append the model's reply to the message history
     res.json(modelResponse);
   } catch (error) {
-    // Handle errors during the API call
     res.status(500).json({ error: error.message || 'Internal server error' });
   }
 });
+
 
 // --- Mount the Gemini router ---
 // All routes defined in geminiRouter will be prefixed with '/gemini'
