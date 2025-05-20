@@ -103,7 +103,9 @@ geminiRouter.post('/chat', async (req, res) => {
   // --- Call Gemini API for other prompts ---
   try {
     // Call the function to send the prompt to the Gemini model
-    const modelResponse = await sendToGeminiModel(prompt);
+   const shortPrompt = `Answer in a concise and short manner (like you are on a call ): ${prompt}`;
+const modelResponse = await sendToGeminiModel(shortPrompt);
+
     // Send the model's response back to the client
     res.json(modelResponse);
   } catch (error) {
