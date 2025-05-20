@@ -13,7 +13,7 @@ app.use(cors({
 }));
 
 // --- API Configuration ---
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY || AIzaSyDWrOJa8VHy5Du9jKcLb3zVcCDhlVguNUk;
 const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`;
 
 // --- Function to interact with Gemini API ---
