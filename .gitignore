@@ -1,0 +1,21 @@
+# Node.js dependencies
+/node_modules/
+
+# Environment variables
+.env
+
+# Logs
+logs/
+*.log
+
+# IDE or editor folders
+.vscode/
+.idea/
+
+# Operating system files
+.DS_Store
+Thumbs.db
+
+# Build or production files
+/dist
+/build
