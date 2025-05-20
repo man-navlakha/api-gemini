@@ -9,7 +9,7 @@ app.use(express.json());
 // --- API Configuration ---
 // It's highly recommended to use environment variables for API keys in production.
 // Replace 'YOUR_GEMINI_API_KEY' with your actual Gemini API Key.
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY || 'AIzaSyDWrOJa8VHy5Du9jKcLb3zVcCDhlVguNUk';
+// const GEMINI_API_KEY = process.env.GEMINI_API_KEY || 'AIzaSyDWrOJa8VHy5Du9jKcLb3zVcCDhlVguNUk';
 // Gemini API endpoint for generating content - Updated to use v1 API version and a different model name
 const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyDWrOJa8VHy5Du9jKcLb3zVcCDhlVguNUk';
 
